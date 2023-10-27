@@ -11,4 +11,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim AS base
 WORKDIR /app
 COPY --from=build /app/out .
 EXPOSE 80
-ENTRYPOINT ["dotnet", "LT.DigitalOffice.AuthService.dll"]
+ENTRYPOINT ["dotnet", "HerzenHelper.AuthService.dll"]

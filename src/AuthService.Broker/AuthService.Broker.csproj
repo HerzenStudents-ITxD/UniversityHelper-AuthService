@@ -1,13 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="8.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AuthService.Token\AuthService.Token.csproj" />
   </ItemGroup>
-  
 </Project>
