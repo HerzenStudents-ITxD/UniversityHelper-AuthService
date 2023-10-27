@@ -93,38 +93,6 @@ namespace HerzenHelper.AuthService
         GetString("RabbitMqPassword", _rabbitMqConfig.Password, _serviceInfoConfig.Id, "Password"));
     }
 
-    private void ConfigureRabbitMq(IServiceCollection services)
-    {
-      (string username, string password) = GetRabbitMqCredentials();
-
-      services.AddMassTransit(x =>
-      {
-        x.UsingRabbitMq((context, cfg) =>
-          {
-            cfg.Host(_rabbitMqConfig.Host, "/", host =>
-            {
-              host.Username(username);
-              host.Password(password);
-            });
-
-            cfg.ReceiveEndpoint(_rabbitMqConfig.ValidateTokenEndpoint, ep =>
-            {
-              ep.ConfigureConsumer<CheckTokenConsumer>(context);
-            });
-
-            cfg.ReceiveEndpoint(_rabbitMqConfig.GetTokenEndpoint, ep =>
-            {
-              ep.ConfigureConsumer<GetTokenConsumer>(context);
-            });
-          });
-
-        x.AddConsumer<CheckTokenConsumer>();
-        x.AddConsumer<GetTokenConsumer>();
-
-        x.AddRequestClients(_rabbitMqConfig);
-      });
-    }
-
     #endregion
 
     #region public methods
@@ -144,7 +112,7 @@ namespace HerzenHelper.AuthService
       Version = "1.3.1";
       Description = "AuthService is an API intended to work with user authentication, create token for user.";
       StartTime = DateTime.UtcNow;
-      ApiName = $"HerzenHelper - {_serviceInfoConfig.Name}";
+      ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -187,9 +155,9 @@ namespace HerzenHelper.AuthService
         .AddRabbitMqCheck();
 
       services.AddControllers();
-      services.AddMassTransitHostedService();
+      //services.AddMassTransitHostedService();
 
-      ConfigureRabbitMq(services);
+      services.ConfigureMassTransit(_rabbitMqConfig);
       ConfigureJwt(services);
     }
 

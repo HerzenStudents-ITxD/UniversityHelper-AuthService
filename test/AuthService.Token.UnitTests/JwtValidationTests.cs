@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using HerzenHelper.AuthService.Models.Dto.Enums;
 using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.Kernel.Exceptions.Models;
+using HerzenHelper.Core.Exceptions.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
