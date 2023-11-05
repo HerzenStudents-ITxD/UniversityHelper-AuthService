@@ -1,2 +1,2 @@
 # HerzenHelper-AuthService
-Сервис проекта HerzenHelper для авторизации и получения JWT токена
+Сервис проекта HerzenHelper для авторизации  и получения и проверки JWT-токенов
