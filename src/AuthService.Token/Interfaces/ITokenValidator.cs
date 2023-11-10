@@ -1,7 +1,7 @@
 ﻿using System;
-using HerzenHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Models.Dto.Enums;
 
-namespace HerzenHelper.AuthService.Token.Interfaces
+namespace UniversityHelper.AuthService.Token.Interfaces
 {
   /// <summary>
   /// Represents interface for user token validator.

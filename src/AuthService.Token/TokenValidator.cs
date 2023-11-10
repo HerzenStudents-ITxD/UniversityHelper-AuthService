@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using HerzenHelper.AuthService.Models.Dto.Enums;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.Core.Exceptions.Models;
+using UniversityHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.Core.Exceptions.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HerzenHelper.AuthService.Token
+namespace UniversityHelper.AuthService.Token
 {
   /// <inheritdoc/>
   public class TokenValidator : ITokenValidator

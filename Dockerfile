@@ -11,4 +11,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0-bullseye-slim AS base
 WORKDIR /app
 COPY --from=build /app/out .
 EXPOSE 80
-ENTRYPOINT ["dotnet", "HerzenHelper.AuthService.dll"]
+ENTRYPOINT ["dotnet", "UniversityHelper.AuthService.dll"]

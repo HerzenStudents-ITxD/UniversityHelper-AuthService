@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HerzenHelper.AuthService.Models.Dto.Responses
+namespace UniversityHelper.AuthService.Models.Dto.Responses
 {
   public record LoginResult
   {

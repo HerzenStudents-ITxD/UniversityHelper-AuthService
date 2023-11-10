@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.Core.Attributes;
+using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.Core.Attributes;
 
-namespace HerzenHelper.AuthService.Validation.Interfaces
+namespace UniversityHelper.AuthService.Validation.Interfaces
 {
   [AutoInject]
   public interface ILoginValidator : IValidator<LoginRequest>

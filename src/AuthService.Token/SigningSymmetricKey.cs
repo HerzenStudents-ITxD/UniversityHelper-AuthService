@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using HerzenHelper.AuthService.Token.Interfaces;
+using UniversityHelper.AuthService.Token.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HerzenHelper.AuthService.Token
+namespace UniversityHelper.AuthService.Token
 {
   public class SigningSymmetricKey : IJwtSigningEncodingKey, IJwtSigningDecodingKey
   {

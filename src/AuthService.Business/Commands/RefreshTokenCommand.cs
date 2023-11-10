@@ -1,15 +1,15 @@
 ﻿using System;
-using HerzenHelper.AuthService.Business.Commands.Interfaces;
-using HerzenHelper.AuthService.Models.Dto.Enums;
-using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.AuthService.Models.Dto.Responses;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.AuthService.Validation.Interfaces;
-using HerzenHelper.Core.FluentValidationExtensions;
+using UniversityHelper.AuthService.Business.Commands.Interfaces;
+using UniversityHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.AuthService.Models.Dto.Responses;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.AuthService.Validation.Interfaces;
+using UniversityHelper.Core.FluentValidationExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace HerzenHelper.AuthService.Business.Commands
+namespace UniversityHelper.AuthService.Business.Commands
 {
   public class RefreshTokenCommand : IRefreshTokenCommand
   {

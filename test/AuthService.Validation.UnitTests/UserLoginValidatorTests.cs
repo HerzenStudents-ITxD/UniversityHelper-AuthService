@@ -1,9 +1,9 @@
 ﻿using FluentValidation.TestHelper;
-using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.AuthService.Validation.Interfaces;
+using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.AuthService.Validation.Interfaces;
 using NUnit.Framework;
 
-namespace HerzenHelper.AuthService.Validation.UnitTests
+namespace UniversityHelper.AuthService.Validation.UnitTests
 {
   public class LoginValidatorTests
   {

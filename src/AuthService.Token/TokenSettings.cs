@@ -1,4 +1,4 @@
-﻿namespace HerzenHelper.AuthService.Token
+﻿namespace UniversityHelper.AuthService.Token
 {
   /// <summary>
   /// Token configuration class filled in Startup.cs.

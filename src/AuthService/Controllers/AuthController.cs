@@ -1,10 +1,10 @@
-﻿using HerzenHelper.AuthService.Business.Commands.Interfaces;
-using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.AuthService.Models.Dto.Responses;
+﻿using UniversityHelper.AuthService.Business.Commands.Interfaces;
+using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.AuthService.Models.Dto.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace HerzenHelper.AuthService.Controllers
+namespace UniversityHelper.AuthService.Controllers
 {
     [Route("[controller]")]
     [ApiController]

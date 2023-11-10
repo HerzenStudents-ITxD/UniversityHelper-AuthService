@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using HerzenHelper.AuthService.Token.Interfaces;
+using UniversityHelper.AuthService.Token.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 
-namespace HerzenHelper.AuthService.Token.UnitTests
+namespace UniversityHelper.AuthService.Token.UnitTests
 {
   class SigningEncodingKeyTests
   {

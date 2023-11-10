@@ -2,15 +2,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using HerzenHelper.AuthService.Models.Dto.Enums;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.Core.Exceptions.Models;
+using UniversityHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.Core.Exceptions.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 
-namespace HerzenHelper.AuthService.Token.UnitTests
+namespace UniversityHelper.AuthService.Token.UnitTests
 {
   public class JwtValidationTests
   {

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text;
-using HerzenHelper.AuthService.Models.Dto.Enums;
-using HerzenHelper.AuthService.Token.Interfaces;
+using UniversityHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Token.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using NUnit.Framework;
 
-namespace HerzenHelper.AuthService.Token.UnitTests
+namespace UniversityHelper.AuthService.Token.UnitTests
 {
   public class CreateNewTokenTests
   {

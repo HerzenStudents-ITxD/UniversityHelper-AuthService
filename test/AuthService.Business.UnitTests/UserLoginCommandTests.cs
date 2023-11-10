@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation.Results;
-using HerzenHelper.AuthService.Business.Commands;
-using HerzenHelper.AuthService.Business.Commands.Interfaces;
-using HerzenHelper.AuthService.Business.Helpers;
-using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.AuthService.Validation.Interfaces;
-using HerzenHelper.Core.BrokerSupport.Broker;
-using HerzenHelper.Models.Broker.Requests.User;
-using HerzenHelper.Models.Broker.Responses.User;
+using UniversityHelper.AuthService.Business.Commands;
+using UniversityHelper.AuthService.Business.Commands.Interfaces;
+using UniversityHelper.AuthService.Business.Helpers;
+using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.AuthService.Validation.Interfaces;
+using UniversityHelper.Core.BrokerSupport.Broker;
+using UniversityHelper.Models.Broker.Requests.User;
+using UniversityHelper.Models.Broker.Responses.User;
 using MassTransit;
 using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
 
-namespace HerzenHelper.AuthService.Business.UnitTests
+namespace UniversityHelper.AuthService.Business.UnitTests
 {
   public class UserCredentialsResponse : IGetUserCredentialsResponse
   {

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using HealthChecks.UI.Client;
-using HerzenHelper.AuthService.Broker.Consumers;
-using HerzenHelper.AuthService.Models.Dto.Configurations;
-using HerzenHelper.AuthService.Token;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.Core.BrokerSupport.Configurations;
-using HerzenHelper.Core.BrokerSupport.Extensions;
-using HerzenHelper.Core.Configurations;
-using HerzenHelper.Core.Extensions;
-using HerzenHelper.Core.Middlewares.ApiInformation;
+using UniversityHelper.AuthService.Broker.Consumers;
+using UniversityHelper.AuthService.Models.Dto.Configurations;
+using UniversityHelper.AuthService.Token;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.Core.BrokerSupport.Configurations;
+using UniversityHelper.Core.BrokerSupport.Extensions;
+using UniversityHelper.Core.Configurations;
+using UniversityHelper.Core.Extensions;
+using UniversityHelper.Core.Middlewares.ApiInformation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
-namespace HerzenHelper.AuthService
+namespace UniversityHelper.AuthService
 {
   public class Startup : BaseApiInfo
   {
@@ -112,7 +112,7 @@ namespace HerzenHelper.AuthService
       Version = "2.0.1.0";
       Description = "AuthService is an API intended to work with user authentication, create token for user.";
       StartTime = DateTime.UtcNow;
-      ApiName = $"HerzenHelper - {_serviceInfoConfig.Name}";
+      ApiName = $"UniversityHelper - {_serviceInfoConfig.Name}";
     }
 
     public void ConfigureServices(IServiceCollection services)

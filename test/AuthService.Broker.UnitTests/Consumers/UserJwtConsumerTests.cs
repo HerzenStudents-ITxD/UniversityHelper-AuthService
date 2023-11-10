@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using HerzenHelper.AuthService.Broker.Consumers;
-using HerzenHelper.AuthService.Models.Dto.Enums;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.Core.BrokerSupport.Broker;
-using HerzenHelper.Core.BrokerSupport.Middlewares.Token;
+using UniversityHelper.AuthService.Broker.Consumers;
+using UniversityHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.Core.BrokerSupport.Broker;
+using UniversityHelper.Core.BrokerSupport.Middlewares.Token;
 using MassTransit.Testing;
 using Moq;
 using NUnit.Framework;
 
-namespace HerzenHelper.AuthService.Broker.UnitTests.Consumers
+namespace UniversityHelper.AuthService.Broker.UnitTests.Consumers
 {
   class UserJwtConsumerTests
   {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace HerzenHelper.AuthService.Token.Interfaces
+namespace UniversityHelper.AuthService.Token.Interfaces
 {
   /// <summary>
   /// Represents interface for create encoding key jwt.

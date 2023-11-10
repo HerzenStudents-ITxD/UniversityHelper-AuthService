@@ -1,4 +1,4 @@
-﻿namespace HerzenHelper.AuthService.Models.Dto.Enums
+﻿namespace UniversityHelper.AuthService.Models.Dto.Enums
 {
   public enum TokenType
   {

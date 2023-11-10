@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using HerzenHelper.AuthService.Models.Dto.Enums;
-using HerzenHelper.AuthService.Token.Interfaces;
-using HerzenHelper.Core.BrokerSupport.Broker;
-using HerzenHelper.Core.BrokerSupport.Middlewares.Token;
+using UniversityHelper.AuthService.Models.Dto.Enums;
+using UniversityHelper.AuthService.Token.Interfaces;
+using UniversityHelper.Core.BrokerSupport.Broker;
+using UniversityHelper.Core.BrokerSupport.Middlewares.Token;
 using MassTransit;
 
-namespace HerzenHelper.AuthService.Broker.Consumers
+namespace UniversityHelper.AuthService.Broker.Consumers
 {
   public class CheckTokenConsumer : IConsumer<ICheckTokenRequest>
   {

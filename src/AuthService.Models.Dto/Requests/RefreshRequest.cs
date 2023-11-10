@@ -1,4 +1,4 @@
-﻿namespace HerzenHelper.AuthService.Models.Dto.Requests
+﻿namespace UniversityHelper.AuthService.Models.Dto.Requests
 {
   public record RefreshRequest
   {

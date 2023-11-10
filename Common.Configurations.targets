@@ -3,8 +3,8 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <AssemblyName>HerzenHelper.$(MSBuildProjectName)</AssemblyName>
-    <RootNamespace>HerzenHelper.$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>UniversityHelper.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>UniversityHelper.$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -26,13 +26,13 @@
   </PropertyGroup>
 
   <ItemGroup Condition="$(AssemblyName.Contains('.UnitTests')) != 'true'">
-    <PackageReference Include="HerzenHelper.Core" Version="2.0.1" />
-    <PackageReference Include="HerzenHelper.Core.BrokerSupport" Version="2.0.1" />
-    <PackageReference Include="HerzenHelper.Models" Version="2.0.1" />
+    <PackageReference Include="UniversityHelper.Core" Version="2.0.2" />
+    <PackageReference Include="UniversityHelper.Core.BrokerSupport" Version="2.0.2" />
+    <PackageReference Include="UniversityHelper.Models" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="$(AssemblyName.Contains('.UnitTests'))">
-    <PackageReference Include="HerzenHelper.Core.UnitTestSupport" Version="2.0.1" />
+    <PackageReference Include="UniversityHelper.Core.UnitTestSupport" Version="2.0.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
   </ItemGroup>
 

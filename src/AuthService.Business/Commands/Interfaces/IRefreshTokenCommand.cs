@@ -1,8 +1,8 @@
-﻿using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.AuthService.Models.Dto.Responses;
-using HerzenHelper.Core.Attributes;
+﻿using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.AuthService.Models.Dto.Responses;
+using UniversityHelper.Core.Attributes;
 
-namespace HerzenHelper.AuthService.Business.Commands.Interfaces
+namespace UniversityHelper.AuthService.Business.Commands.Interfaces
 {
   [AutoInject]
   public interface IRefreshTokenCommand

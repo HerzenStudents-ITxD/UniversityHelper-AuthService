@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using HerzenHelper.AuthService.Models.Dto.Requests;
-using HerzenHelper.AuthService.Validation.Interfaces;
+using UniversityHelper.AuthService.Models.Dto.Requests;
+using UniversityHelper.AuthService.Validation.Interfaces;
 
-namespace HerzenHelper.AuthService.Validation
+namespace UniversityHelper.AuthService.Validation
 {
   public class RefreshValidator : AbstractValidator<RefreshRequest>, IRefreshValidator
   {
