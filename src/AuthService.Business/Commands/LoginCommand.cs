@@ -16,108 +16,107 @@ using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace UniversityHelper.AuthService.Business.Commands
+namespace UniversityHelper.AuthService.Business.Commands;
+
+public class LoginCommand : ILoginCommand
 {
-  public class LoginCommand : ILoginCommand
+  private readonly ITokenEngine _tokenEngine;
+  private readonly ILoginValidator _validator;
+  private readonly IRequestClient<IGetUserCredentialsRequest> _requestClient;
+  private readonly ILogger<LoginCommand> _logger;
+  private readonly HttpContext _httpContext;
+
+  public LoginCommand(
+    ITokenEngine tokenEngine,
+    ILoginValidator validator,
+    IRequestClient<IGetUserCredentialsRequest> requestClient,
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<LoginCommand> logger)
   {
-    private readonly ITokenEngine _tokenEngine;
-    private readonly ILoginValidator _validator;
-    private readonly IRequestClient<IGetUserCredentialsRequest> _requestClient;
-    private readonly ILogger<LoginCommand> _logger;
-    private readonly HttpContext _httpContext;
+    _tokenEngine = tokenEngine;
+    _validator = validator;
+    _requestClient = requestClient;
+    _logger = logger;
+    _httpContext = httpContextAccessor.HttpContext;
+  }
 
-    public LoginCommand(
-      ITokenEngine tokenEngine,
-      ILoginValidator validator,
-      IRequestClient<IGetUserCredentialsRequest> requestClient,
-      IHttpContextAccessor httpContextAccessor,
-      ILogger<LoginCommand> logger)
+  public async Task<LoginResult> Execute(LoginRequest request)
+  {
+    request.LoginData = request.LoginData.Trim();
+
+    _logger.LogInformation(
+      "User login request for LoginData: '{loginData}' from IP: '{requestIP}'.",
+      request.LoginData,
+      _httpContext.Connection.RemoteIpAddress);
+
+    _validator.ValidateAndThrowCustom(request);
+
+    IGetUserCredentialsResponse userCredentials = await GetUserCredentials(request.LoginData);
+
+    if (userCredentials == null)
     {
-      _tokenEngine = tokenEngine;
-      _validator = validator;
-      _requestClient = requestClient;
-      _logger = logger;
-      _httpContext = httpContextAccessor.HttpContext;
+      throw new NotFoundException(
+        "User was not found, please check your credentials and try again. In case this error occurred again contact DO support team by email 'spartak.ryabtsev@lanit-tercom.com'.");
     }
 
-    public async Task<LoginResult> Execute(LoginRequest request)
+    VerifyPasswordHash(userCredentials, request.Password);
+
+    var result = new LoginResult
     {
-      request.LoginData = request.LoginData.Trim();
+      UserId = userCredentials.UserId,
+      AccessToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Access, out double accessTokenLifeTime),
+      RefreshToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Refresh, out double refreshTokenLifeTime),
+      AccessTokenExpiresIn = accessTokenLifeTime,
+      RefreshTokenExpiresIn = refreshTokenLifeTime
+    };
 
-      _logger.LogInformation(
-        "User login request for LoginData: '{loginData}' from IP: '{requestIP}'.",
-        request.LoginData,
-        _httpContext.Connection.RemoteIpAddress);
+    _logger.LogInformation(
+      "User was successfully logged in with LoginData: '{loginData}' from IP: {requestIP}",
+      request.LoginData,
+      _httpContext.Connection.RemoteIpAddress);
 
-      _validator.ValidateAndThrowCustom(request);
+    return result;
+  }
 
-      IGetUserCredentialsResponse userCredentials = await GetUserCredentials(request.LoginData);
+  private async Task<IGetUserCredentialsResponse> GetUserCredentials(string loginData)
+  {
+    IGetUserCredentialsResponse result = null;
 
-      if (userCredentials == null)
+    try
+    {
+      var brokerResponse = await _requestClient.GetResponse<IOperationResult<IGetUserCredentialsResponse>>(
+        IGetUserCredentialsRequest.CreateObj(loginData));
+
+      if (!brokerResponse.Message.IsSuccess)
       {
-        throw new NotFoundException(
-          "User was not found, please check your credentials and try again. In case this error occurred again contact DO support team by email 'spartak.ryabtsev@lanit-tercom.com'.");
+        _logger.LogWarning("Can't get user credentials for LoginData: '{loginData}'", loginData);
       }
-
-      VerifyPasswordHash(userCredentials, request.Password);
-
-      var result = new LoginResult
+      else
       {
-        UserId = userCredentials.UserId,
-        AccessToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Access, out double accessTokenLifeTime),
-        RefreshToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Refresh, out double refreshTokenLifeTime),
-        AccessTokenExpiresIn = accessTokenLifeTime,
-        RefreshTokenExpiresIn = refreshTokenLifeTime
-      };
-
-      _logger.LogInformation(
-        "User was successfully logged in with LoginData: '{loginData}' from IP: {requestIP}",
-        request.LoginData,
-        _httpContext.Connection.RemoteIpAddress);
-
-      return result;
+        result = brokerResponse.Message.Body;
+      }
+    }
+    catch (Exception exc)
+    {
+      _logger.LogError(
+        exc,
+        "Exception was caught while receiving user credentials for LoginData: {loginData}",
+        loginData);
     }
 
-    private async Task<IGetUserCredentialsResponse> GetUserCredentials(string loginData)
+    return result;
+  }
+
+  private void VerifyPasswordHash(IGetUserCredentialsResponse savedUserCredentials, string requestPassword)
+  {
+    string requestPasswordHash = PasswordHelper.GetPasswordHash(
+      savedUserCredentials.UserLogin,
+      savedUserCredentials.Salt,
+      requestPassword);
+
+    if (!string.Equals(savedUserCredentials.PasswordHash, requestPasswordHash))
     {
-      IGetUserCredentialsResponse result = null;
-
-      try
-      {
-        var brokerResponse = await _requestClient.GetResponse<IOperationResult<IGetUserCredentialsResponse>>(
-          IGetUserCredentialsRequest.CreateObj(loginData));
-
-        if (!brokerResponse.Message.IsSuccess)
-        {
-          _logger.LogWarning("Can't get user credentials for LoginData: '{loginData}'", loginData);
-        }
-        else
-        {
-          result = brokerResponse.Message.Body;
-        }
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(
-          exc,
-          "Exception was caught while receiving user credentials for LoginData: {loginData}",
-          loginData);
-      }
-
-      return result;
-    }
-
-    private void VerifyPasswordHash(IGetUserCredentialsResponse savedUserCredentials, string requestPassword)
-    {
-      string requestPasswordHash = PasswordHelper.GetPasswordHash(
-        savedUserCredentials.UserLogin,
-        savedUserCredentials.Salt,
-        requestPassword);
-
-      if (!string.Equals(savedUserCredentials.PasswordHash, requestPasswordHash))
-      {
-        throw new ForbiddenException("Wrong user credentials.");
-      }
+      throw new ForbiddenException("Wrong user credentials.");
     }
   }
 }

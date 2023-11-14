@@ -10,87 +10,86 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 
-namespace UniversityHelper.AuthService.Token.UnitTests
+namespace UniversityHelper.AuthService.Token.UnitTests;
+
+public class JwtValidationTests
 {
-  public class JwtValidationTests
+  private string _audience;
+  private string _userJwt;
+  private SymmetricSecurityKey _encodingKey;
+  private TokenValidator _jwtValidation;
+  private IJwtSigningDecodingKey _decodingKey;
+
+  [OneTimeSetUp]
+  public void OneTimeSetUp()
   {
-    private string _audience;
-    private string _userJwt;
-    private SymmetricSecurityKey _encodingKey;
-    private TokenValidator _jwtValidation;
-    private IJwtSigningDecodingKey _decodingKey;
+    const string signingSecurityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
+    _encodingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSecurityKey));
+
+    _decodingKey = (IJwtSigningDecodingKey)new SigningSymmetricKey();
+
+    var options = Options.Create(new TokenSettings
     {
-      const string signingSecurityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
+      TokenIssuer = "AuthService",
+      TokenAudience = "Client"
+    });
 
-      _encodingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSecurityKey));
+    _jwtValidation = new TokenValidator(_decodingKey, options, NullLogger<TokenValidator>.Instance);
+  }
 
-      _decodingKey = (IJwtSigningDecodingKey)new SigningSymmetricKey();
+  [Test]
+  public void ShouldThrowExceptionWhenTokenIsNotValid()
+  {
+    _audience = "";
 
-      var options = Options.Create(new TokenSettings
-      {
-        TokenIssuer = "AuthService",
-        TokenAudience = "Client"
-      });
+    CreateToken();
 
-      _jwtValidation = new TokenValidator(_decodingKey, options, NullLogger<TokenValidator>.Instance);
-    }
+    Assert.Throws<ForbiddenException>(
+      () => _jwtValidation.Validate(_userJwt, TokenType.Access),
+      "Token failed validation.");
+  }
 
-    [Test]
-    public void ShouldThrowExceptionWhenTokenIsNotValid()
+  [Test]
+  public void ShouldThrowExceptionWhenTokenWasWrongFormat()
+  {
+    _userJwt = "Example_userJwt";
+
+    Assert.Throws<BadRequestException>(
+      () => _jwtValidation.Validate(_userJwt, TokenType.Access),
+      "Token was wrong format.");
+  }
+
+  [Test]
+  public void ShouldNotThrowsWhenTokenIsValid()
+  {
+    _audience = "Client";
+
+    CreateToken();
+
+    _jwtValidation.Validate(_userJwt, TokenType.Access);
+  }
+
+  private void CreateToken()
+  {
+    var signingAlgorithm = SecurityAlgorithms.HmacSha256;
+
+    var claims = new[]
     {
-      _audience = "";
+      new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString()),
+      new Claim(TokenEngine.ClaimTokenType, TokenType.Access.ToString())
+    };
 
-      CreateToken();
+    var jwt = new JwtSecurityToken(
+      issuer: "AuthService",
+      audience: _audience,
+      notBefore: DateTime.UtcNow,
+      claims: claims,
+      expires: DateTime.Now.AddMinutes(5),
+      signingCredentials: new SigningCredentials(
+        _encodingKey,
+        signingAlgorithm));
 
-      Assert.Throws<ForbiddenException>(
-        () => _jwtValidation.Validate(_userJwt, TokenType.Access),
-        "Token failed validation.");
-    }
-
-    [Test]
-    public void ShouldThrowExceptionWhenTokenWasWrongFormat()
-    {
-      _userJwt = "Example_userJwt";
-
-      Assert.Throws<BadRequestException>(
-        () => _jwtValidation.Validate(_userJwt, TokenType.Access),
-        "Token was wrong format.");
-    }
-
-    [Test]
-    public void ShouldNotThrowsWhenTokenIsValid()
-    {
-      _audience = "Client";
-
-      CreateToken();
-
-      _jwtValidation.Validate(_userJwt, TokenType.Access);
-    }
-
-    private void CreateToken()
-    {
-      var signingAlgorithm = SecurityAlgorithms.HmacSha256;
-
-      var claims = new[]
-      {
-        new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString()),
-        new Claim(TokenEngine.ClaimTokenType, TokenType.Access.ToString())
-      };
-
-      var jwt = new JwtSecurityToken(
-        issuer: "AuthService",
-        audience: _audience,
-        notBefore: DateTime.UtcNow,
-        claims: claims,
-        expires: DateTime.Now.AddMinutes(5),
-        signingCredentials: new SigningCredentials(
-          _encodingKey,
-          signingAlgorithm));
-
-      _userJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-    }
+    _userJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
   }
 }

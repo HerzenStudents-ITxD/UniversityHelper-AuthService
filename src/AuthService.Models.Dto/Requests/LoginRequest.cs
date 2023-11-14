@@ -1,8 +1,7 @@
-﻿namespace UniversityHelper.AuthService.Models.Dto.Requests
+﻿namespace UniversityHelper.AuthService.Models.Dto.Requests;
+
+public record LoginRequest
 {
-  public record LoginRequest
-  {
-    public string LoginData { get; set; }
-    public string Password { get; set; }
-  }
+  public string LoginData { get; set; }
+  public string Password { get; set; }
 }

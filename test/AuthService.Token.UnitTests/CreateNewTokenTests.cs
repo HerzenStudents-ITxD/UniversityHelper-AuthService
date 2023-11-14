@@ -7,53 +7,52 @@ using Microsoft.IdentityModel.Tokens;
 using Moq;
 using NUnit.Framework;
 
-namespace UniversityHelper.AuthService.Token.UnitTests
+namespace UniversityHelper.AuthService.Token.UnitTests;
+
+public class CreateNewTokenTests
 {
-  public class CreateNewTokenTests
+  private Mock<IJwtSigningEncodingKey> signingEncodingKey;
+  private SymmetricSecurityKey expectedKey;
+  private ITokenEngine tokenEngine;
+  private IOptions<TokenSettings> tokenOptions;
+
+  [OneTimeSetUp]
+  public void OneTimeSetUp()
   {
-    private Mock<IJwtSigningEncodingKey> signingEncodingKey;
-    private SymmetricSecurityKey expectedKey;
-    private ITokenEngine tokenEngine;
-    private IOptions<TokenSettings> tokenOptions;
+    string securityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
+    signingEncodingKey = new Mock<IJwtSigningEncodingKey>();
+
+    tokenOptions = Options.Create(new TokenSettings
     {
-      string securityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
+      TokenAudience = "AuthClient",
+      TokenIssuer = "AuthClient",
+      AccessTokenLifetimeInMinutes = 5,
+      RefreshTokenLifetimeInMinutes = 10
+    });
 
-      signingEncodingKey = new Mock<IJwtSigningEncodingKey>();
+    expectedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
 
-      tokenOptions = Options.Create(new TokenSettings
-      {
-        TokenAudience = "AuthClient",
-        TokenIssuer = "AuthClient",
-        AccessTokenLifetimeInMinutes = 5,
-        RefreshTokenLifetimeInMinutes = 10
-      });
+    tokenEngine = new TokenEngine(signingEncodingKey.Object, tokenOptions);
+  }
 
-      expectedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
+  [Test]
+  public void SuccessfulCreateNewToken()
+  {
+    string signingAlgorithm = "HS256";
+    double tokenExpiresIn;
 
-      tokenEngine = new TokenEngine(signingEncodingKey.Object, tokenOptions);
-    }
+    signingEncodingKey
+        .Setup(x => x.GetKey())
+        .Returns(expectedKey);
 
-    [Test]
-    public void SuccessfulCreateNewToken()
-    {
-      string signingAlgorithm = "HS256";
-      double tokenExpiresIn;
+    signingEncodingKey
+        .SetupGet(x => x.SigningAlgorithm)
+        .Returns(signingAlgorithm);
 
-      signingEncodingKey
-          .Setup(x => x.GetKey())
-          .Returns(expectedKey);
+    var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access, out tokenExpiresIn);
 
-      signingEncodingKey
-          .SetupGet(x => x.SigningAlgorithm)
-          .Returns(signingAlgorithm);
-
-      var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access, out tokenExpiresIn);
-
-      Assert.IsNotEmpty(newJwt);
-      Assert.AreEqual(tokenOptions.Value.AccessTokenLifetimeInMinutes, tokenExpiresIn);
-    }
+    Assert.IsNotEmpty(newJwt);
+    Assert.AreEqual(tokenOptions.Value.AccessTokenLifetimeInMinutes, tokenExpiresIn);
   }
 }

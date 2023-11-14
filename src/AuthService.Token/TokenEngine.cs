@@ -8,53 +8,52 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace UniversityHelper.AuthService.Token
+namespace UniversityHelper.AuthService.Token;
+
+public class TokenEngine : ITokenEngine
 {
-  public class TokenEngine : ITokenEngine
+  public const string ClaimUserId = "UserId";
+  public const string ClaimTokenType = "TokenType";
+
+  private readonly IJwtSigningEncodingKey _signingEncodingKey;
+  private readonly IOptions<TokenSettings> _tokenOptions;
+
+  public TokenEngine(
+    [FromServices] IJwtSigningEncodingKey signingEncodingKey,
+    [FromServices] IOptions<TokenSettings> tokenOptions)
   {
-    public const string ClaimUserId = "UserId";
-    public const string ClaimTokenType = "TokenType";
+    _signingEncodingKey = signingEncodingKey;
+    _tokenOptions = tokenOptions;
+  }
 
-    private readonly IJwtSigningEncodingKey _signingEncodingKey;
-    private readonly IOptions<TokenSettings> _tokenOptions;
-
-    public TokenEngine(
-      [FromServices] IJwtSigningEncodingKey signingEncodingKey,
-      [FromServices] IOptions<TokenSettings> tokenOptions)
+  /// <inheritdoc />
+  public string Create(Guid userId, TokenType tokenType, out double tokenExpiresIn)
+  {
+    if (userId == Guid.Empty)
     {
-      _signingEncodingKey = signingEncodingKey;
-      _tokenOptions = tokenOptions;
+      throw new NotFoundException("User was not found.");
     }
 
-    /// <inheritdoc />
-    public string Create(Guid userId, TokenType tokenType, out double tokenExpiresIn)
+    var claims = new[]
     {
-      if (userId == Guid.Empty)
-      {
-        throw new NotFoundException("User was not found.");
-      }
+      new Claim(ClaimUserId, userId.ToString()),
+      new Claim(ClaimTokenType, tokenType.ToString())
+    };
 
-      var claims = new[]
-      {
-        new Claim(ClaimUserId, userId.ToString()),
-        new Claim(ClaimTokenType, tokenType.ToString())
-      };
+    tokenExpiresIn = tokenType == TokenType.Access
+      ? _tokenOptions.Value.AccessTokenLifetimeInMinutes
+      : _tokenOptions.Value.RefreshTokenLifetimeInMinutes;
 
-      tokenExpiresIn = tokenType == TokenType.Access
-        ? _tokenOptions.Value.AccessTokenLifetimeInMinutes
-        : _tokenOptions.Value.RefreshTokenLifetimeInMinutes;
+    var jwt = new JwtSecurityToken(
+      issuer: _tokenOptions.Value.TokenIssuer,
+      audience: _tokenOptions.Value.TokenAudience,
+      notBefore: DateTime.UtcNow,
+      claims: claims,
+      expires: DateTime.UtcNow.AddMinutes(tokenExpiresIn),
+      signingCredentials: new SigningCredentials(
+        _signingEncodingKey.GetKey(),
+        _signingEncodingKey.SigningAlgorithm));
 
-      var jwt = new JwtSecurityToken(
-        issuer: _tokenOptions.Value.TokenIssuer,
-        audience: _tokenOptions.Value.TokenAudience,
-        notBefore: DateTime.UtcNow,
-        claims: claims,
-        expires: DateTime.UtcNow.AddMinutes(tokenExpiresIn),
-        signingCredentials: new SigningCredentials(
-          _signingEncodingKey.GetKey(),
-          _signingEncodingKey.SigningAlgorithm));
-
-      return new JwtSecurityTokenHandler().WriteToken(jwt);
-    }
+    return new JwtSecurityTokenHandler().WriteToken(jwt);
   }
 }

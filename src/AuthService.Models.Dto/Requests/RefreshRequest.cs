@@ -1,7 +1,6 @@
-﻿namespace UniversityHelper.AuthService.Models.Dto.Requests
+﻿namespace UniversityHelper.AuthService.Models.Dto.Requests;
+
+public record RefreshRequest
 {
-  public record RefreshRequest
-  {
-    public string RefreshToken { get; set; }
-  }
+  public string RefreshToken { get; set; }
 }
