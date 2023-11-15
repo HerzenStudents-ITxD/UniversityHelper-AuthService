@@ -15,6 +15,7 @@ using MassTransit;
 using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UniversityHelper.AuthService.Business.UnitTests;
 
