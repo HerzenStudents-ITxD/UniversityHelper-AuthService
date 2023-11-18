@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HealthChecks.UI.Client;
 using UniversityHelper.AuthService.Broker.Consumers;
 using UniversityHelper.AuthService.Models.Dto.Configurations;
@@ -14,6 +15,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,10 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 
 namespace UniversityHelper.AuthService;
 
@@ -67,32 +73,6 @@ public class Startup : BaseApiInfo
       });
   }
 
-  private (string username, string password) GetRabbitMqCredentials()
-  {
-    static string GetString(string envVar, string formAppsettings, string generated, string fieldName)
-    {
-      string str = Environment.GetEnvironmentVariable(envVar);
-      if (string.IsNullOrEmpty(str))
-      {
-        str = formAppsettings ?? generated;
-
-        Log.Information(
-          formAppsettings == null
-            ? $"Default RabbitMq {fieldName} was used."
-            : $"RabbitMq {fieldName} from appsetings.json was used.");
-      }
-      else
-      {
-        Log.Information($"RabbitMq {fieldName} from environment was used.");
-      }
-
-      return str;
-    }
-
-    return (GetString("RabbitMqUsername", _rabbitMqConfig.Username, $"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}", "Username"),
-      GetString("RabbitMqPassword", _rabbitMqConfig.Password, _serviceInfoConfig.Id, "Password"));
-  }
-
   #endregion
 
   #region public methods
@@ -109,7 +89,7 @@ public class Startup : BaseApiInfo
       .GetSection(BaseRabbitMqConfig.SectionName)
       .Get<RabbitMqConfig>();
 
-    Version = "2.0.1.0";
+    Version = "2.0.2.0";
     Description = "AuthService is an API intended to work with user authentication, create token for user.";
     StartTime = DateTime.UtcNow;
     ApiName = $"UniversityHelper - {_serviceInfoConfig.Name}";
@@ -159,6 +139,18 @@ public class Startup : BaseApiInfo
 
     services.ConfigureMassTransit(_rabbitMqConfig);
     ConfigureJwt(services);
+
+    services.AddSwaggerGen(options =>
+    {
+      options.SwaggerDoc($"{Version}", new OpenApiInfo
+      {
+        Version = Version,
+        Title = _serviceInfoConfig.Name,
+        Description = Description
+      });
+
+      options.EnableAnnotations();
+    });
   }
 
   public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
@@ -189,6 +181,12 @@ public class Startup : BaseApiInfo
         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
       });
     });
+
+    app.UseSwagger()
+      .UseSwaggerUI(options =>
+      {
+        options.SwaggerEndpoint($"/swagger/{Version}/swagger.json", $"{Version}");
+      });
   }
 
   #endregion
