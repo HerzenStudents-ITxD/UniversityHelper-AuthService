@@ -2,7 +2,7 @@
 
 <Project>
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>UniversityHelper.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>UniversityHelper.$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
@@ -26,13 +26,13 @@
   </PropertyGroup>
 
   <ItemGroup Condition="$(AssemblyName.Contains('.UnitTests')) != 'true'">
-    <PackageReference Include="UniversityHelper.Core" Version="2.0.2" />
-    <PackageReference Include="UniversityHelper.Core.BrokerSupport" Version="2.0.2" />
-    <PackageReference Include="UniversityHelper.Models" Version="2.0.2" />
+    <PackageReference Include="UniversityHelper.Core" Version="3.0.1" />
+    <PackageReference Include="UniversityHelper.Core.BrokerSupport" Version="3.0.1" />
+    <PackageReference Include="UniversityHelper.Models" Version="3.0.1" />
   </ItemGroup>
 
   <ItemGroup Condition="$(AssemblyName.Contains('.UnitTests'))">
-    <PackageReference Include="UniversityHelper.Core.UnitTestSupport" Version="2.0.2" />
+    <PackageReference Include="UniversityHelper.Core.UnitTestSupport" Version="3.0.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
   </ItemGroup>
 
