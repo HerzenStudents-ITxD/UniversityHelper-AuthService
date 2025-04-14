@@ -7,7 +7,7 @@ COPY *.sln ./
 COPY *.csproj ./
 
 # 2. Robust restore command
-RUN dotnet restore "YourProject.csproj" --no-cache --source https://api.nuget.org/v3/index.json || \
+RUN dotnet restore "AuthService.csproj" --no-cache --source https://api.nuget.org/v3/index.json || \
     (echo "NuGet restore failed. Check network connectivity." && exit 1)
 
 # 3. Copy remaining files
