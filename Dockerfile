@@ -3,8 +3,6 @@ WORKDIR /app
 
 COPY . ./
 RUN dotnet restore -s https://api.nuget.org/v3/index.json
-
-COPY . ./
 RUN dotnet dev-certs https
 RUN dotnet publish -c Release -o out
 
