@@ -2,18 +2,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
-# 1. Copy project/solution files explicitly
-COPY *.sln ./
-COPY *.csproj ./
-
-# 2. Robust restore command
-RUN dotnet restore "AuthService.csproj" --no-cache --source https://api.nuget.org/v3/index.json || \
-    (echo "NuGet restore failed. Check network connectivity." && exit 1)
-
-# 3. Copy remaining files
+# Copy project files and restore dependencies
 COPY . ./
+RUN dotnet restore --no-cache --source https://api.nuget.org/v3/index.json
 
-# 4. Build and publish the application
+# Build and publish the application
 RUN dotnet publish -c Release -o out
 
 # Runtime Stage
