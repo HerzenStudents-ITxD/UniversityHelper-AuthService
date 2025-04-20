@@ -105,7 +105,8 @@ public class Startup : BaseApiInfo
         {
           builder
             .AllowAnyOrigin()
-            //.WithOrigins(
+            .WithOrigins(
+                  "http://localhost:5173")
             //    "https://*.ltdo.xyz",
             //    "http://*.ltdo.xyz",
             //    "http://ltdo.xyz",
