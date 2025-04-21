@@ -104,19 +104,13 @@ public class Startup : BaseApiInfo
         builder =>
         {
           builder
-            .AllowAnyOrigin()
             .WithOrigins(
-                  "http://localhost:5173")
-            //    "https://*.ltdo.xyz",
-            //    "http://*.ltdo.xyz",
-            //    "http://ltdo.xyz",
-            //    "http://ltdo.xyz:9818",
-            //    "http://localhost:4200",
-            //    "http://localhost:4500")
+              "http://localhost:5173",
+              "http://localhost:4200",
+              "http://localhost:4500")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
-          //.WithMethods("POST");
         });
     });
 
@@ -161,11 +155,14 @@ public class Startup : BaseApiInfo
 
     app.UseExceptionsHandler(loggerFactory);
 
-    app.UseApiInformation();
-
     app.UseRouting();
 
     app.UseCors(CorsPolicyName);
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.UseApiInformation();
 
     app.UseEndpoints(endpoints =>
     {

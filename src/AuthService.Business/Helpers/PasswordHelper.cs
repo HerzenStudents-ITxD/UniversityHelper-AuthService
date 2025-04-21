@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -11,7 +12,7 @@ internal static class PasswordHelper
 
   internal static string GetPasswordHash(string userLogin, string salt, string userPassword)
   {
-    return Encoding.UTF8.GetString(new SHA512Managed().ComputeHash(
-            Encoding.UTF8.GetBytes($"{salt}{userLogin}{userPassword}{INTERNAL_SALT}")));
+    return Convert.ToBase64String(SHA512.Create().ComputeHash(
+      Encoding.UTF8.GetBytes($"{salt}{userLogin}{userPassword}{INTERNAL_SALT}")));
   }
 }
