@@ -115,6 +115,7 @@ public class Startup : BaseApiInfo
             //    "http://localhost:4500")
             .AllowAnyHeader()
             .AllowAnyMethod();
+            .AllowCredentials()
           //.WithMethods("POST");
         });
     });

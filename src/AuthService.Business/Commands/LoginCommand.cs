@@ -55,8 +55,15 @@ public class LoginCommand : ILoginCommand
 
     if (userCredentials == null)
     {
-      throw new NotFoundException(
-        "User was not found, please check your credentials and try again. In case this error occurred again contact DO support team by email 'spartak.ryabtsev@lanit-tercom.com'.");
+        throw new NotFoundException("User was not found, please check your credentials and try again. In case this error occurred again contact RSPU support team by email ' vis-lab@herzen.spb.ru'.");
+    }
+
+    // Проверка на null для полей userCredentials
+    if (userCredentials.UserId == Guid.Empty || 
+        string.IsNullOrEmpty(userCredentials.PasswordHash) || 
+        string.IsNullOrEmpty(userCredentials.Salt))
+    {
+        throw new InvalidDataException("Invalid user credentials data");
     }
 
     VerifyPasswordHash(userCredentials, request.Password);
