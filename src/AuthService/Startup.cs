@@ -27,6 +27,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using UniversityHelper.Core.BrokerSupport.Helpers;
 
 namespace UniversityHelper.AuthService;
 
@@ -50,7 +51,6 @@ public class Startup : BaseApiInfo
     services.AddSingleton<IJwtSigningDecodingKey>(signingKey);
 
     services.AddTransient<ITokenEngine, TokenEngine>();
-
     services.AddTransient<ITokenValidator, TokenValidator>();
 
     services.Configure<TokenSettings>(Configuration.GetSection("TokenSettings"));
@@ -71,6 +71,41 @@ public class Startup : BaseApiInfo
           ValidateIssuerSigningKey = true
         };
       });
+  }
+
+  private void ConfigureMassTransit(IServiceCollection services)
+  {
+    (string username, string password) = RabbitMqCredentialsHelper
+      .Get(_rabbitMqConfig, _serviceInfoConfig);
+
+    services.AddMassTransit(x =>
+    {
+      // Register consumers
+      x.AddConsumer<CheckTokenConsumer>();
+      x.AddConsumer<GetTokenConsumer>();
+
+      x.UsingRabbitMq((context, cfg) =>
+      {
+        cfg.Host(_rabbitMqConfig.Host, "/", host =>
+        {
+          host.Username(username);
+          host.Password(password);
+        });
+
+        // Configure endpoints
+        cfg.ReceiveEndpoint(_rabbitMqConfig.ValidateTokenEndpoint, e =>
+        {
+          e.ConfigureConsumer<CheckTokenConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint(_rabbitMqConfig.GetTokenEndpoint, e =>
+        {
+          e.ConfigureConsumer<GetTokenConsumer>(context);
+        });
+      });
+    });
+
+    services.AddMassTransitHostedService();
   }
 
   #endregion
@@ -131,9 +166,8 @@ public class Startup : BaseApiInfo
       .AddRabbitMqCheck();
 
     services.AddControllers();
-    //services.AddMassTransitHostedService();
-
-    services.ConfigureMassTransit(_rabbitMqConfig);
+    
+    ConfigureMassTransit(services);
     ConfigureJwt(services);
 
     services.AddSwaggerGen(options =>
