@@ -6,28 +6,20 @@ WORKDIR /app
 COPY . ./
 RUN dotnet restore --no-cache --source https://api.nuget.org/v3/index.json
 
+# Build and publish the application
 COPY . ./
 RUN dotnet dev-certs https --trust
-#RUN dotnet dev-certs https --trust
 RUN dotnet publish -c Release -o out
 
-# Build and publish the application
-# RUN dotnet publish -c Release -o out
-
 # Runtime Stage
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
-# Copy the published output from the build stage
 COPY --from=build /app/out .
-
-# Expose ports for HTTP and HTTPS
-EXPOSE 80
-EXPOSE 443
-ENV PATH="${PATH}:/usr/bin/dotnet"
-
 COPY --from=build /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 
+ENV PATH="${PATH}:/usr/bin/dotnet"
+EXPOSE 80
+EXPOSE 443
 
-# Entry point for the application
 ENTRYPOINT ["dotnet", "UniversityHelper.AuthService.dll"]
