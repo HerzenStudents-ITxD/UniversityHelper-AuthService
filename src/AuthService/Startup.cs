@@ -141,8 +141,7 @@ public class Startup : BaseApiInfo
           builder
             .WithOrigins(
               "http://localhost:5173",
-              "http://localhost:4200",
-              "http://localhost:4500")
+              "https://itvd.online")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
