@@ -139,9 +139,7 @@ public class Startup : BaseApiInfo
         builder =>
         {
           builder
-            .WithOrigins(
-              "http://localhost:5173",
-              "https://itvd.online")
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
